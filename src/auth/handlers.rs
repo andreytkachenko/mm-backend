@@ -24,8 +24,6 @@ async fn register(
     ctx: Data<Context>,
     Json(user_data): Json<SignUpCredentials>,
 ) -> ApiResult {
-    log::trace!("Received register request");
-
     let mut user = user_data;
     // NOTE(evgenymng): This call will never end with an error, because it can
     // only produce one, when the cost is invalid, which we cannot possibly have.
@@ -47,8 +45,6 @@ async fn login(
     ctx: Data<Context>,
     Json(creds): Json<SignInCredentials>,
 ) -> ApiResult {
-    log::trace!("Received login request");
-
     let user = ctx.db.get_user_by_creds(&creds).await.map_err(|_| {
         // NOTE(t3m8ch): This call will never end with an error, because it can only
         // produce one, when the cost is invalid, which we cannot possibly have.
@@ -66,7 +62,6 @@ async fn login(
     {
         return Err(ApiError::WrongCredentials);
     }
-    log::trace!("User has been verified");
 
     let (access_token, refresh_token) = create_tokens(&ctx.config, &user.email)
         .map_err(|_| ApiError::Internal)?;
